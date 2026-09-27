@@ -624,7 +624,12 @@ function reduce(s: GS, a: Act): GS {
 
         // If attacker reached goal zone WITHOUT defender, trigger choice UI
       if (moved.type === 'A' && triggersShoot(moved) && !defender) {
-        console.log('[ATTACKER MOVE] Reached goal zone without defender, showing choice')
+        console.log('[ATTACKER MOVE] Reached goal zone without defender, showing choice', {
+          attackerId: moved.id,
+          position: `${moved.col}${moved.row}`,
+          team: moved.team,
+          piecesOnSameSquare: allExceptMoved.filter(p => p.col === moved.col && p.row === moved.row).map(p => ({ id: p.id, type: p.type, team: p.team }))
+        })
         // Clear stayedInGoalZone flag if attacker is choosing
         const updatedPieces = pieces.map(p => 
           p.id === moved.id ? { ...p, stayedInGoalZone: false } : p
@@ -664,6 +669,13 @@ function reduce(s: GS, a: Act): GS {
         )
       }
 
+      console.log('[MOVE] No special condition met, ending turn normally', {
+        movedPiece: { id: moved.id, type: moved.type, team: moved.team },
+        position: `${moved.col}${moved.row}`,
+        isAttacker: moved.type === 'A',
+        isGoalZone: triggersShoot(moved),
+        hasDefender: !!defender
+      })
       return { ...finishMatchTurn(s, pieces, moveProgress), ...ensureSnitchWaitActive({ ...s, pieces, ...moveProgress }), revision: bumpRevision(s) }
     }
 
