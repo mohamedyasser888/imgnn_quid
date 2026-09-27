@@ -2142,7 +2142,8 @@ function GamePageInner() {
     const playerActionTypes = ['DUEL', 'ATTACKER_CHOICE', 'ATTACKER_SHOOT']
     const needsSave = captainMovementActions.includes(a.kind) || playerActionTypes.includes(a.kind) || 
       ['DRESET', 'COMBAT_SPIN', 'COMBAT_RESOLVE', 'COMBAT_REVEAL_COMPLETE', 'END_BONUS_TURN', 'SEEKER_CONTINUE', 
-       'SNITCH_SYNC_WAIT', 'SNITCH_TRIGGER_ENCOUNTER', 'SNITCH_OUTCOME_SPIN', 'SNITCH_OUTCOME_RESOLVE', 'SNITCH_LAND'].includes(a.kind)
+       'SNITCH_SYNC_WAIT', 'SNITCH_TRIGGER_ENCOUNTER', 'SNITCH_OUTCOME_SPIN', 'SNITCH_OUTCOME_RESOLVE', 'SNITCH_LAND',
+       'SNITCH_SPIN', 'SNITCH_CATCH_SPIN', 'SNITCH_CATCH_RESOLVE', 'BLUDGER_FIRE', 'BLUDGER_READY', 'BLUDGER_RESOLVE'].includes(a.kind)
 
     if (needsSave && (nextState.revision ?? 0) > expectedRevision) {
       void (async () => {
