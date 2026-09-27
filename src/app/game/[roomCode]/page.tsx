@@ -2874,6 +2874,16 @@ function GamePageInner() {
         timestamp: Date.now()
       })
       setGameStateRoomId(data.room_id)
+      
+      // CRITICAL FIX: If this is deployment phase (game hasn't started yet),
+      // use the starter team from URL parameter, not database
+      // This ensures coin flip result is respected even if database was created before the fix
+      if (loadedState.phase === 'deployment') {
+        console.log('[INITIAL LOAD] Deployment phase - using starter team from URL:', starterTeam)
+        loadedState.turn = starterTeam as Team
+        loadedState.coinFlipResult = starterTeam as Team
+      }
+      
       // Force fresh state - always accept the loaded state
       disp({ kind: 'SYNC', gs: loadedState })
       setSyncReceived(true)
