@@ -1597,7 +1597,7 @@ function shuffleSquares(excluded: string[] = []): string[] {
   return squares
 }
 
-const WHEEL_SPIN_DURATION_MS = 8500
+const WHEEL_SPIN_DURATION_MS = 2000 // 2 seconds for snitch wheel animation
 
 function cubicBezierEase(t: number, x1: number, y1: number, x2: number, y2: number): number {
   const cx3 = 3 * x1, bx3 = 3 * (x2 - x1) - cx3, ax3 = 1 - cx3 - bx3
@@ -2624,7 +2624,7 @@ function GamePageInner() {
       console.log('[SNITCH] Waiting for combat to finish before SNITCH_OUTCOME_RESOLVE')
       return
     }
-    const t = setTimeout(() => emit({ kind: 'SNITCH_OUTCOME_RESOLVE' }), 10200) // Same timing as CombatWheel
+    const t = setTimeout(() => emit({ kind: 'SNITCH_OUTCOME_RESOLVE' }), 2200) // 2s animation + 200ms buffer
     return () => clearTimeout(t)
   }, [gs.snitchPhase, gs.snitchOutcomeAngle, gs.combat, myTeam, emit])
 
@@ -2695,7 +2695,7 @@ function GamePageInner() {
       console.log('[SNITCH] Waiting for combat to finish before SNITCH_CATCH_RESOLVE')
       return
     }
-    const t = setTimeout(() => emit({ kind: 'SNITCH_CATCH_RESOLVE' }), 10200) // Same timing as CombatWheel
+    const t = setTimeout(() => emit({ kind: 'SNITCH_CATCH_RESOLVE' }), 2200) // 2s animation + 200ms buffer
     return () => clearTimeout(t)
   }, [gs.snitchPhase, gs.snitchCatchAngle, gs.combat, myTeam, emit])
 
