@@ -177,14 +177,15 @@ function buildWheelSections(atkCount: number, defCount: number): ('atk' | 'def')
    PURE HELPERS
 ═══════════════════════════════════════════════════════════════════════════ */
 
-function initGS(matchId?: string): GS {
+function initGS(matchId?: string, starterTeam?: Team): GS {
   return {
     phase:  'deployment',
     pieces: [
       { id: 't1-gk', team: 1, type: 'GK', col: T1_GK.col, row: T1_GK.row, broomSpeed: 0 },
       { id: 't2-gk', team: 2, type: 'GK', col: T2_GK.col, row: T2_GK.row, broomSpeed: 0 },
     ],
-    turn: 1 as Team, s1: 0, s2: 0, saves1: 0, saves2: 0, streak1: 0, streak2: 0, streakBonusTeam: null, duel: null, combat: null, d1: false, d2: false,
+    turn: (starterTeam || 1) as Team, // Use provided starter team or default to 1
+    s1: 0, s2: 0, saves1: 0, saves2: 0, streak1: 0, streak2: 0, streakBonusTeam: null, duel: null, combat: null, d1: false, d2: false,
     turnCount:     0,
     snitchPos:     null,
     snitchPhase:   null,
@@ -194,7 +195,7 @@ function initGS(matchId?: string): GS {
     starterPhase:  null,
     matchId:       matchId || `room-${Date.now()}`, // Use room-based match ID for consistency
     coinFlipStatus: 'completed', // Coin flip already happened in room lobby
-    coinFlipResult: 1 as Team, // Default, will be overridden by URL param
+    coinFlipResult: (starterTeam || 1) as Team, // Use provided starter team or default to 1
   }
 }
 
@@ -2058,9 +2059,9 @@ function GamePageInner() {
   
   // Initialize game state with starter team from coin flip result and unique match ID
   const [gs, disp]           = useReducer(reduce, undefined, () => ({
-    ...initGS(`room-${roomCode}`), // Use roomCode as base for match ID for consistency
-    turn: starterTeam as Team, // Use the starter team from coin flip result
-    coinFlipResult: starterTeam as Team, // Use the starter team from coin flip result
+    ...initGS(`room-${roomCode}`, starterTeam as Team), // Pass starter team to initGS
+    turn: starterTeam as Team, // Ensure turn is set correctly
+    coinFlipResult: starterTeam as Team, // Ensure coinFlipResult is set correctly
   }))
   const [selId, setSel]      = useState<string | null>(null)
   const [moves, setMoves]    = useState<Set<string>>(new Set())
@@ -2856,7 +2857,7 @@ function GamePageInner() {
     let cancelled = false
     void supabase.rpc('get_or_create_quidditch_game_state', {
       p_room_code: roomCode,
-      p_initial_state: initGS(`room-${roomCode}`), // Use room code for consistent matchId
+      p_initial_state: initGS(`room-${roomCode}`, starterTeam as Team), // Pass starter team to initial state
     }).then(({ data, error }) => {
       if (cancelled || error || !data?.success) {
         // Silent fail - game will sync from other players
